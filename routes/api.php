@@ -10,7 +10,7 @@ Route::apiResource('/brands', BrandController::class);
 Route::apiResource('/category' , CategoryController::class);
 
 
-// ---------------------------------- Laravel Api   Lesson 24           12 : 53 (+2)  ------------------------------------
+// ---------------------------------- Laravel Api   Lesson 25           00 : 00 (+2)  ------------------------------------
 
 /*
 **composer  ----> composer remove laravel/passport  (name package)

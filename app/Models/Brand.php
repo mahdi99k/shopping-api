@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class Brand extends Model
 {
@@ -29,6 +30,7 @@ class Brand extends Model
     public function updateBrand(Request $request)
     {
         if ($request->has('image')) {
+//          Storage::delete($request->image);
             $imagePath = Carbon::now()->microsecond . "_" . time() . "." . $request->image->extension();
             $request->image->storeAs('images/brands/', $imagePath, 'public');
         }
@@ -42,6 +44,7 @@ class Brand extends Model
 
     public function deleteBrand(Brand $brand): ?bool
     {
+//      Storage::delete($brand->image);
         return $brand->delete();
     }
 

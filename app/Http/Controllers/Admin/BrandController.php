@@ -32,7 +32,7 @@ class BrandController extends ApiController
         }
 
         $brand->newBrand($request);
-        $dataResponse = $brand->orderBy('id', 'desc')->first();
+        $dataResponse = $brand->query()->orderBy('id', 'desc')->first();
         return $this->successResponse(201, new BrandResource($dataResponse), 'brand created successfully');
 
     }
