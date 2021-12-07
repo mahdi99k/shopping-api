@@ -38,9 +38,9 @@ class BrandController extends ApiController
     }
 
 
-    public function show($id)
+    public function show(Brand $brand)
     {
-        //
+        return $this->successResponse(200 , new BrandResource($brand) , 'GET' . '_' . $brand->title);
     }
 
 

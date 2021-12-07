@@ -7,10 +7,12 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::apiResource('/brands', BrandController::class);
-Route::apiResource('/category' , CategoryController::class);
+Route::apiResource('/category', CategoryController::class);
+Route::get('/category/{category}/parent', [CategoryController::class, "parent"])->name('category.parent');
+Route::get('/category/{category}/children', [CategoryController::class, "children"])->name('category.children');
 
 
-// ---------------------------------- Laravel Api   Lesson 25           00 : 00 (+2)  ------------------------------------
+// ---------------------------------- Laravel Api   Lesson 27           00 : 00 (+2)  ------------------------------------
 
 /*
 **composer  ----> composer remove laravel/passport  (name package)
@@ -744,10 +746,91 @@ class AuthController extends ApiController
     }
 
 
+
+//--------------------------------------------------------------------------------------------------------------- Category
+
+//---------------------------- web.php
+Route::get('/category/{category}/parent', [CategoryController::class, "parent"])->name('category.parent');
+Route::get('/category/{category}/children', [CategoryController::class, "children"])->name('category.children');
+
+
+//---------------------------- controller Category me
+public function parent(Category $category): \Illuminate\Http\JsonResponse
+{
+    return $this->successResponse(200, new CategoryResource($category->load('parent'))  , 'GET parents');
+}
+
+
+public function children(Category $category)
+{
+    return $this->successResponse(200 , new CategoryResource($category->load('children')) , 'GET childrens');
+}
+
+
+
+//----------------------------- Model relationship
+public function parent(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+{
+    return $this->belongsTo(Category::class, 'parent_id');  // ارتباط با خود جدول که متعلق به کل جدول
+}
+
+public function children(): \Illuminate\Database\Eloquent\Relations\HasMany
+{
+    return $this->hasMany(Category::class, 'parent_id');
+}
+
+
+
+//-----------------------------CategoryResource
+return [
+    'id' => $this->id,
+    'title' => $this->title,
+    'parent' => new CategoryResource($this->whenLoaded('parent')),
+    'children' => CategoryResource::collection($this->whenLoaded('children')),  //array به صورت مجموعه ای
+];
+
+//----------------------------- controller index
+public function index(): \Illuminate\Http\JsonResponse
+{
+    $category = Category::paginate(10);
+
+    return $this->successResponse(200, [
+        'categories' => CategoryResource::collection($category),
+        'links' => CategoryResource::collection($category)->response()->getData()->links,                          // paginator orginal
+        'meta' => CategoryResource::collection($category)->response()->getData()->meta,                          // paginator مشخصات فعال و غیرفعال
+//          'links' => CategoryResource::collection($category)->response()->getDate()->links,
+//          'meta' => CategoryResource::collection($category)->response()->getDate()->meta,
+    ], 'get categories');
+}
+
+
+//----------------------------- controller update
+public function update(Request $request, Category $category)
+{
+    //اگر عنوان برابر عنوان درون دیتابیس بود و اگر ایدی دو بار تکرار شده بود و وجود داشت یعنی یونیک نبوده
+    $categoryUnique = Category::query()->where('title', $request->title)->where('id', '!=', $category->id)->exists();
+    if ($categoryUnique) {
+        return $this->errorResponse(422, 'The title has already been taken');
+    }
+
+    $validate = Validator::make($request->all(), [
+        'title' => 'required|string',
+        'parent_id' => 'nullable|integer',
+    ]);
+
+    if ($validate->fails()) {
+        return $this->errorResponse(422 , $validate->messages());
+    }
+
+    $category->updateCategory($request);
+    return $this->successResponse(200 , new CategoryResource($category) , 'category updated successfully');
+
+}
+
+
+
 //---------------------------------------------------------------------------------------------------------------
 
 
 
-
 */
-

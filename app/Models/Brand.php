@@ -48,5 +48,4 @@ class Brand extends Model
         return $brand->delete();
     }
 
-
 }
