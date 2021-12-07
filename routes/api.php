@@ -16,7 +16,7 @@ Route::get('/category/{category}/children', [CategoryController::class, "childre
 Route::apiResource('/product' , ProductController::class);
 
 
-// ---------------------------------- Laravel Api   Lesson 28          00 : 00 (+2)  ------------------------------------
+// ---------------------------------- Laravel Api   Lesson 28         00 : 00 (+2)  ------------------------------------
 
 /*
 php artisan make:model Product -m --api                 //ساخت مادل  و ماگرشن و کنترلر(ریسورس)
