@@ -2,19 +2,24 @@
 
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
+
+//Admin:
 Route::apiResource('/brands', BrandController::class);
 Route::apiResource('/category', CategoryController::class);
 Route::get('/category/{category}/parent', [CategoryController::class, "parent"])->name('category.parent');
 Route::get('/category/{category}/children', [CategoryController::class, "children"])->name('category.children');
+Route::apiResource('/product' , ProductController::class);
 
 
-// ---------------------------------- Laravel Api   Lesson 27           00 : 00 (+2)  ------------------------------------
+// ---------------------------------- Laravel Api   Lesson 28          00 : 00 (+2)  ------------------------------------
 
 /*
+php artisan make:model Product -m --api                 //ساخت مادل  و ماگرشن و کنترلر(ریسورس)
 **composer  ----> composer remove laravel/passport  (name package)
 
 //---------------------------------------------------------- route
