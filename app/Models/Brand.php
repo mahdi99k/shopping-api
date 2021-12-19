@@ -15,6 +15,14 @@ class Brand extends Model
 
     protected $guarded = ['id'];
 
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
+
+
     public function newBrand(Request $request)
     {
         $imagePath = Carbon::now()->microsecond . '_' . time() . '.' . $request->image->extension();
@@ -37,14 +45,15 @@ class Brand extends Model
 
         $this->update([
             'title' => $request->title,
-            'image' => $request->has('image') ? $request->image : $this->image,   //? if exist request image save : image now
+            'image' => $request->has('image') ? $request->image : $this->image,      //? if exist request (create) image save : image now
         ]);
     }
 
 
     public function deleteBrand(Brand $brand): ?bool
     {
-//      Storage::delete($brand->image);
+        unlink('storage/images/brands/' . $brand->image);
+//      \Storage::delete($product->image);
         return $brand->delete();
     }
 

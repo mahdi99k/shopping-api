@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\CategoryCreateRequest;
+use App\Http\Requests\Admin\CategoryUpdateRequest;
 use App\Http\Resources\Admin\CategoryResource;
 use App\Models\Category;
 use Illuminate\Http\Request;
@@ -20,22 +22,20 @@ class CategoryController extends ApiController
             'categories' => CategoryResource::collection($category),
             'links' => CategoryResource::collection($category)->response()->getData()->links,                          // paginator orginal
             'meta' => CategoryResource::collection($category)->response()->getData()->meta,                          // paginator مشخصات فعال و غیرفعال
-//          'links' => CategoryResource::collection($category)->response()->getDate()->links,
-//          'meta' => CategoryResource::collection($category)->response()->getDate()->meta,
         ], 'get categories');
     }
 
 
-    public function store(Request $request, Category $category): \Illuminate\Http\JsonResponse
+    public function store(CategoryCreateRequest $request, Category $category): \Illuminate\Http\JsonResponse
     {
-        $validate = Validator::make($request->all(), [
+        /* $validate = Validator::make($request->all(), [
             'title' => 'required|string|unique:categories,title|max:255',
-            'parant_id' => 'integer',
+            'parant_id' => 'integer|exists:categories,id',
         ]);
 
         if ($validate->fails()) {
             return $this->errorResponse(422, $validate->messages());
-        }
+        } */
 
         $category->newCategory($request);
         $dataResponse = $category->query()->orderBy('id', 'desc')->first();
@@ -50,7 +50,7 @@ class CategoryController extends ApiController
     }
 
 
-    public function update(Request $request, Category $category)
+    public function update(CategoryUpdateRequest $request, Category $category)
     {
         //اگر عنوان برابر عنوان درون دیتابیس بود و اگر ایدی دو بار تکرار شده بود و وجود داشت یعنی یونیک نبوده
         $categoryUnique = Category::query()->where('title', $request->title)->where('id', '!=', $category->id)->exists();
@@ -58,17 +58,8 @@ class CategoryController extends ApiController
             return $this->errorResponse(422, 'The title has already been taken');
         }
 
-        $validate = Validator::make($request->all(), [
-            'title' => 'required|string',
-            'parent_id' => 'nullable|integer',
-        ]);
-
-        if ($validate->fails()) {
-            return $this->errorResponse(422 , $validate->messages());
-        }
-
         $category->updateCategory($request);
-        return $this->successResponse(200 , new CategoryResource($category) , 'category updated successfully');
+        return $this->successResponse(200, new CategoryResource($category), 'category updated successfully');
 
     }
 
@@ -76,21 +67,26 @@ class CategoryController extends ApiController
     public function destroy(Category $category): \Illuminate\Http\JsonResponse
     {
         $category->deleteCategory($category);
-        return $this->successResponse(200 , new CategoryResource($category) , 'category deleted successfully');
+        return $this->successResponse(200, new CategoryResource($category), 'category deleted successfully');
     }
 
 
-    //----------------------------------------- me
+    //----------------------------------------- relationship
 
     public function parent(Category $category): \Illuminate\Http\JsonResponse
     {
-        return $this->successResponse(200, new CategoryResource($category->load('parent'))  , 'GET parents');
+        return $this->successResponse(200, new CategoryResource($category->load('parent')), 'GET parents');
     }
 
 
-    public function children(Category $category)
+    public function children(Category $category): \Illuminate\Http\JsonResponse
     {
-        return $this->successResponse(200 , new CategoryResource($category->load('children')) , 'GET childrens');
+        return $this->successResponse(200, new CategoryResource($category->load('children')), 'GET childrens');
+    }
+
+    public function getProducts(Category $category): \Illuminate\Http\JsonResponse
+    {
+        return $this->successResponse(200, new CategoryResource($category->load('products')), 'getProducts in category');
     }
 
 

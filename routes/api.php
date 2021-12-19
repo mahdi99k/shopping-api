@@ -2,21 +2,26 @@
 
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\GalleryController;
 use App\Http\Controllers\Admin\ProductController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 
-
 //Admin:
 Route::apiResource('/brands', BrandController::class);
+Route::get('/brands/{brand}/products', [BrandController::class, "getProducts"]);
+
 Route::apiResource('/category', CategoryController::class);
+Route::get('/category/{category}/products', [CategoryController::class, "getProducts"]);
 Route::get('/category/{category}/parent', [CategoryController::class, "parent"])->name('category.parent');
 Route::get('/category/{category}/children', [CategoryController::class, "children"])->name('category.children');
-Route::apiResource('/product' , ProductController::class);
+
+Route::apiResource('/product', ProductController::class);
+Route::apiResource('/product.gallery', GalleryController::class);
 
 
-// ---------------------------------- Laravel Api   Lesson 28         00 : 00 (+2)  ------------------------------------
+// ---------------------------------- Laravel Api   Lesson 35         00 : 00 (+2)  ------------------------------------
 
 /*
 php artisan make:model Product -m --api                 //ساخت مادل  و ماگرشن و کنترلر(ریسورس)
@@ -834,8 +839,53 @@ public function update(Request $request, Category $category)
 
 
 
-//---------------------------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------------------------- image link PRoductResource
+env -> #image path link
+IMAGE_UPLOADED_FOR_PRODUCTS = "http://127.0.0.1:8000/storage/images/products/"
 
+//--------------------- Productresource
+return [
+   'id' => $this->id,
+   'category_id' => $this->category_id,
+   'brand_id' => $this->brand_id,
+   'name' => $this->name,
+   'image' => url(env('IMAGE_UPLOADED_FOR_PRODUCTS'). $this->image),  //link
+   'description' => $this->description,
+   'price' => $this->price,
+   'quantity' => $this->quantity,
+];
+
+
+//--------------------------------------------------------------------------------------------------------------- validation
+
+*** php artisan make:request Admin/CategoryCreateRequest       ^-^
+
+public function rules()
+{
+    return [
+        'title' => 'required|string|unique:categories,title|max:255',
+        'parant_id' => 'integer|exists:categories,id',
+    ];
+}
+
+
+public function failedValidation(Validator $validator)  //Contracts/Validation | showMessage
+{
+    throw new HttpResponseException(response()->json([
+        'success' => false,
+        'message' => 'validation errors',
+        'attribute' => $validator->errors(),  //show errors
+    ]));
+}
+
+public function messages()
+{
+     return [
+        'title.required' => 'عنوان دسته بندی نباید خالی باشد',
+     ];
+}
+
+//---------------------------------------------------------------------------------------------------------------
 
 
 */

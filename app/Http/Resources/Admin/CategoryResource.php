@@ -15,6 +15,7 @@ class CategoryResource extends JsonResource
             'title' => $this->title,
             'parent' => new CategoryResource($this->whenLoaded('parent')),
             'children' => CategoryResource::collection($this->whenLoaded('children')),  //array به صورت مجموعه ای
+            'products' => ProductResource::collection($this->whenLoaded('products')),   //whenLoaded اگر لود شده نمایش بده وگرنه نمیخواد
         ];
 
     }

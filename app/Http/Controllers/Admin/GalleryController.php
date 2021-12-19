@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\GalleryCreateRequest;
 use App\Models\Gallery;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
-class GalleryController extends Controller
+class GalleryController extends ApiController
 {
 
 
@@ -16,9 +19,10 @@ class GalleryController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function store(GalleryCreateRequest $request , Product $product)
     {
-        //
+        $product->newGallery($request);
+        return $this->successResponse(200 , true , 'Done!');  //true -> just upload image
     }
 
 

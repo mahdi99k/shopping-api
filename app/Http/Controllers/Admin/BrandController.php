@@ -6,6 +6,7 @@ use App\Http\Controllers\ApiController;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\BrandResource;
 use App\Models\Brand;
+use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -40,7 +41,7 @@ class BrandController extends ApiController
 
     public function show(Brand $brand)
     {
-        return $this->successResponse(200 , new BrandResource($brand) , 'GET' . '_' . $brand->title);
+        return $this->successResponse(200, new BrandResource($brand), 'GET' . '_' . $brand->title);
     }
 
 
@@ -73,5 +74,10 @@ class BrandController extends ApiController
         return $this->successResponse(200, $brand->title . ' ' . 'deleted successfully');
     }
 
+
+    public function getProducts(Brand $brand)
+    {
+        return $this->successResponse(200 , new BrandResource($brand->load('products')) , 'getProducts');
+    }
 
 }

@@ -22,6 +22,11 @@ class Category extends Model
         return $this->hasMany(Category::class , 'parent_id');
     }
 
+    public function products(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Product::class , 'category_id');       //هر دسته بندی می تواند تعداد زیادی محصول داشته باشد
+    }
+
 
 
     public function newCategory( Request $request)
