@@ -12,8 +12,7 @@ class GalleryResource extends JsonResource
         return [
             'id' => $this->id,
             'product_id' => $this->product_id,
-//          'path' =>  url(env('IMAGE_UPLOADED_FOR_PRODUCTS'). $this->path),
-            'path' =>  $this->path,
+            'path' => url(env('IMAGE_UPLOADED_FOR_GALLERY') . $this->path),
             'mime' => $this->mime,
         ];
     }

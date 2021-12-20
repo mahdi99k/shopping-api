@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class Product extends Model
@@ -100,6 +101,14 @@ class Product extends Model
             }
 
         }
+    }
+
+
+    public function deleteGallery(Gallery $gallery)
+    {
+//      Storage::delete($gallery->path);  //not ok
+        unlink('storage/images/galleries/' . $gallery->path);
+        $gallery->delete();
     }
 
 

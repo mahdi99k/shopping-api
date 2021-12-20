@@ -17,13 +17,12 @@ class GalleryCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'product_id' => '',
             'path.*' => 'nullable|image|mimes:jpg,jpeg,png,svg|min:5|max:2048',  //path.* -> is array
         ];
     }
 
 
-    public function failedValidation(Validator $validator)
+    public function failedValidation(Validator $validator)   //Contracts/Validation
     {
         throw new HttpResponseException(response()->json([
             'status' => false,
